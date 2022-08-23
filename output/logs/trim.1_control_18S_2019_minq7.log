@@ -1,0 +1,10 @@
+WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
+java -ea -Xmx10000m -Xms10000m -cp /usr/local/opt/bbmap-38.96-1/current/ jgi.BBDuk -Xmx10000m zl=9 in=data/1_control_18S_2019_minq7.fastq out=output/010_process/1_control_18S_2019_minq7.r1.fastq.gz ktrim=r k=23 mink=11 hdist=1 tpe tbo qtrim=r trimq=15
+Executing jgi.BBDuk [-Xmx10000m, zl=9, in=data/1_control_18S_2019_minq7.fastq, out=output/010_process/1_control_18S_2019_minq7.r1.fastq.gz, ktrim=r, k=23, mink=11, hdist=1, tpe, tbo, qtrim=r, trimq=15]
+Version 38.96
+
+maskMiddle was disabled because useShortKmers=true
+Exception in thread "main" java.lang.RuntimeException: Can't read file 'data/1_control_18S_2019_minq7.fastq'
+	at shared.Tools.testInputFiles(Tools.java:185)
+	at jgi.BBDuk.<init>(BBDuk.java:912)
+	at jgi.BBDuk.main(BBDuk.java:78)
