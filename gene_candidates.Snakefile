@@ -13,22 +13,36 @@ def get_reads(wildcards):
     my_filename = sample_table.loc[sample]['filename']
     return(Path(reads_dir, my_filename).resolve().as_posix())
 
+###########
+# GLOBALS #
+###########
+sample_table_loc = "data/sample_table/sample_table.csv"
+
+
+#########
+# MAIN #
+#########
+
+sample_table = pandas.read_csv(
+    sample_table_loc,
+    index_col="sample_spm_name")
+all_samples = sorted(set(sample_table.index))
+
 
 #########
 # RULES #
 #########
 
-
-
-
+rule target:
+    input:
+        expand('data/fastq_repaired/{sample}.Aligned.sortedByCoord.out.bam',
+               sample=all_samples)
 
 rule trim:
     input:
         get_reads
     output:
         'output/trim/{sample}.fastq.gz'
-    params:
-        adapters = '/adapters.fa'
     log:
         'output/logs/trim.{sample}.log'
     threads:
@@ -44,6 +58,5 @@ rule trim:
         'zl=9 '
         'in={input} '
         'out={output.r1} '
-        'ref={params.adapters} '
         'ktrim=r k=23 mink=11 hdist=1 tpe tbo qtrim=r trimq=15 '
         '&> {log}'
