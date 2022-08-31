@@ -35,7 +35,7 @@ all_samples = sorted(set(sample_table.index))
 
 rule target:
     input:
-        expand('data/fastq_repaired/{sample}.Aligned.sortedByCoord.out.bam',
+        expand('data/fastq_repaired/{sample}.fastq',
                sample=all_samples)
 
 rule trim:
