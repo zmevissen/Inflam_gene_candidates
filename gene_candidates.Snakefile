@@ -21,8 +21,8 @@ reads_dir = 'data/fastq_repaired'
 sample_table = pandas.read_csv(
     sample_table_loc,
     index_col="sample_spm_name")
-all_samples = sorted(set(sample_table.index))
 
+paired_sample_names = sorted(set(sample_table[sample_table.LibraryLayout == 'PAIRED'].index))
 
 #########
 # RULES #
@@ -31,7 +31,7 @@ all_samples = sorted(set(sample_table.index))
 rule target:
     input:
         expand('output/trim/{sample}_{r}.fastq.gz',
-               sample=all_samples, r=[1, 2])
+               sample=paired_sample_names, r=[1, 2])
 
 rule trim:
     input:
