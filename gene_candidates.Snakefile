@@ -31,7 +31,7 @@ all_samples = sorted(set(sample_table.index))
 rule target:
     input:
         expand('output/trim/{sample}_{r}.fastq.gz',
-               sample=all_samples, r=list(1, 2))
+               sample=all_samples, r=[1, 2])
 
 rule trim:
     input:
