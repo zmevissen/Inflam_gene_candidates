@@ -1,3 +1,0 @@
-NameError in line 17 of /Users/Zac_Mevissen/git/Inflam_gene_candidates/Snakefile:
-name 'bbmap' is not defined
-  File "/Users/Zac_Mevissen/git/Inflam_gene_candidates/Snakefile", line 17, in <module>

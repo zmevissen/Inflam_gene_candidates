@@ -1,6 +1,0 @@
-Building DAG of jobs...
-MissingInputException in line 5 of /Users/Zac_Mevissen/git/Inflam_gene_candidates/Snakefile:
-Missing input files for rule trim:
-    output: output/010_process/1_control_18S_2019_minq7.r1.fastq.gz
-    affected files:
-        1_control_18S_2019_minq7.fastq
