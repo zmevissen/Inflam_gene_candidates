@@ -17,7 +17,7 @@ def get_reads(wildcards):
 # GLOBALS #
 ###########
 sample_table_loc = "data/sample_table/sample_table.csv"
-
+reads_dir = 'data/fastq_repaired'
 
 #########
 # MAIN #
@@ -35,7 +35,7 @@ all_samples = sorted(set(sample_table.index))
 
 rule target:
     input:
-        expand('data/fastq_repaired/{sample}.fastq',
+        expand('output/trim/{sample}.fastq.gz',
                sample=all_samples)
 
 rule trim:
