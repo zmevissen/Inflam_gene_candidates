@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
-
-#TODO check with Tom that this is the correct link 
-bbmap = quay.io/biocontainers/bbmap:38.98--h5c4e2a8_1
+ 
+bbmap = "quay.io/biocontainers/bbmap:38.98--h5c4e2a8_1"
 
 
 #############
 # FUNCTIONS #
 #############
 
-def get_reads(wildcards):
-    sample = wildcards.sample
-    my_filename = sample_table.loc[sample]['filename']
-    return(Path(reads_dir, my_filename).resolve().as_posix())
 
 ###########
 # GLOBALS #
@@ -40,13 +35,17 @@ rule target:
 
 rule trim:
     input:
-        get_reads
+        r1 = Path(reads_dir, "{sample}_1.fastq.gz").resolve(),
+        r2 = Path(reads_dir, "{sample}_2.fastq.gz").resolve()
+        
     output:
-        'output/trim/{sample}.fastq.gz'
+        r1 = 'output/trim/{sample}_1.fastq.gz',
+        r2 = 'output/trim/{sample}_2.fastq.gz'
+        
     log:
         'output/logs/trim.{sample}.log'
     threads:
-        1
+        10
     resources:
         time = 59,
         mem_mb = 10 * 1000
@@ -56,7 +55,9 @@ rule trim:
         'bbduk.sh '
         '-Xmx{resources.mem_mb}m '
         'zl=9 '
-        'in={input} '
+        'in={input.r1} '
+        'in2={input.r1} '
         'out={output.r1} '
+        'out2={output.r2} '
         'ktrim=r k=23 mink=11 hdist=1 tpe tbo qtrim=r trimq=15 '
         '&> {log}'
