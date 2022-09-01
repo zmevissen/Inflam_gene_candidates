@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import pandas
-bbmap = "quay.io/biocontainers/bbmap:38.98--h5c4e2a8_1"
+bbmap = "docker://quay.io/biocontainers/bbmap:38.98--h5c4e2a8_1"
 
 
 #############
