@@ -56,7 +56,7 @@ rule trim:
         '-Xmx{resources.mem_mb}m '
         'zl=9 '
         'in={input.r1} '
-        'in2={input.r1} '
+        'in2={input.r2} '
         'out={output.r1} '
         'out2={output.r2} '
         'ktrim=r k=23 mink=11 hdist=1 tpe tbo qtrim=r trimq=15 '
