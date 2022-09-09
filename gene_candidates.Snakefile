@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import pandas
+from snakemake.remote.FTP import RemoteProvider as FTPRemoteProvider
 
 #############
 # CONTAINERS #
@@ -155,19 +156,14 @@ rule target:
     
 rule download_ref_gff:
     input:
-        ref_gff_url
+        FTP.remote(ref_gff_url, keep_local=True)
     output:
         f'output/ref/{ref_gff}'
     log:
         'output/logs/ref_gff.log'
-    threads:
-        10
-    resources:
-        time = 59,
-        mem_mb = 10 * 1000
     shell:
-        'gunzip | '
-        'wget -P output/ref {input} '     
+        'mv {input} {output} ' 
+        'gunzip {output} '
 
 rule trim:
     input:
