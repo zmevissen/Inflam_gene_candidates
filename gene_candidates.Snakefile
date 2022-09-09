@@ -26,6 +26,7 @@ ref_gff = 'GCA_000001405.29_GRCh38.p14_genomic.gff'
 #########
 # MAIN #
 #########
+FTP = FTPRemoteProvider()
 
 sample_table = pandas.read_csv(
     sample_table_loc,
