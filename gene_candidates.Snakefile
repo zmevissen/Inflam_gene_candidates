@@ -149,7 +149,7 @@ paired_sample_names = sorted(set(sample_table[sample_table.LibraryLayout == 'PAI
 #         # '--sjdbGTFtagExonParentGeneName Name '
 #         '&> {log}'
    
- rule target:
+rule target:
     input:
         f'output/ref/{ref_gff}'
     
