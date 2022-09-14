@@ -153,7 +153,7 @@ paired_sample_names = sorted(set(sample_table[sample_table.LibraryLayout == 'PAI
    
 rule target:
     input:
-        f'output/ref/{ref_gff}'
+        f'output/ref/{ref_gff}.gz'
     
 rule download_ref_gff:
     input:
@@ -163,8 +163,7 @@ rule download_ref_gff:
     log:
         'output/logs/ref_gff.log'
     shell:
-        'mv {input} {output} ' 
-        'gunzip {output} '
+        'mv {input} {output} '
 
 rule trim:
     input:
