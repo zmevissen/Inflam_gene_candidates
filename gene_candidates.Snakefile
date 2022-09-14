@@ -19,9 +19,15 @@ bbmap = "docker://quay.io/biocontainers/bbmap:38.98--h5c4e2a8_1"
 ###########
 sample_table_loc = "data/sample_table/sample_table.csv"
 reads_dir = 'data/fastq_repaired'
+
 # TODO check with Tom this is correct: genomes downloaded from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/
 ref_gff_url = ('ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.gff.gz')
 ref_gff = 'GCA_000001405.29_GRCh38.p14_genomic.gff.gz'
+
+ref_fna_url = ('ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.fna.gz')  
+ref_fna = 'GCA_000001405.29_GRCh38.p14_genomic.fna.gz'  
+
+
 
 #########
 # MAIN #
@@ -153,7 +159,18 @@ paired_sample_names = sorted(set(sample_table[sample_table.LibraryLayout == 'PAI
    
 rule target:
     input:
-        f'output/ref/{ref_gff}'
+        f'output/ref/{ref_gff}', 
+        f'output/ref/{ref_fna}'
+        
+rule download_ref_fna:
+    input:
+        FTP.remote(ref_fna_url, keep_local=True)
+    output:
+        f'output/ref/{ref_fna}'
+    log:
+        'output/logs/ref_fna.log'
+    shell:
+        'mv {input} {output} '
     
 rule download_ref_gff:
     input:
