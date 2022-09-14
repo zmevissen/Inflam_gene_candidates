@@ -20,8 +20,8 @@ bbmap = "docker://quay.io/biocontainers/bbmap:38.98--h5c4e2a8_1"
 sample_table_loc = "data/sample_table/sample_table.csv"
 reads_dir = 'data/fastq_repaired'
 # TODO check with Tom this is correct: genomes downloaded from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/
-ref_gff_url = 'ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.gff.gz'
-ref_gff = 'GCA_000001405.29_GRCh38.p14_genomic.gff'
+ref_gff_url = ('ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.gff.gz')
+ref_gff = 'GCA_000001405.29_GRCh38.p14_genomic.gff.gz'
 
 #########
 # MAIN #
@@ -153,7 +153,7 @@ paired_sample_names = sorted(set(sample_table[sample_table.LibraryLayout == 'PAI
    
 rule target:
     input:
-        f'output/ref/{ref_gff}.gz'
+        f'output/ref/{ref_gff}'
     
 rule download_ref_gff:
     input:
