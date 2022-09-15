@@ -58,7 +58,7 @@ rule star_second_pass:
         r2 = 'output/trim/{sample}_2.fastq.gz',
         star_reference = 'output/star-index/SA',
         junctions = expand('output/star/pass1/{sample}.SJ.out.tab',
-                           sample=all_samples)
+                           sample=paired_sample_names)
     output:
         bam = 'output/star/pass2/{sample}.Aligned.sortedByCoord.out.bam',
         counts = 'output/star/pass2/{sample}.ReadsPerGene.out.tab'
