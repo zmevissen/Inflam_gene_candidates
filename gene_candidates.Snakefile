@@ -93,7 +93,7 @@ rule star_second_pass:
 
  #TODO is the purpose of the first pass to identify splice junctions? How does this work?       
  #Can STAR handle multiple inputs? Will it produce 1 or 2 junction files?
- rule star_first_pass:
+rule star_first_pass:
     input:
         r1 = 'output/trim/{sample}_1.fastq.gz',
         r2 = 'output/trim/{sample}_2.fastq.gz'
