@@ -26,10 +26,10 @@ reads_dir = 'data/fastq_repaired'
 
 #genomes downloaded from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/
 ref_gff_url = ('ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.gff.gz')
-ref_gff = 'GCA_000001405.29_GRCh38.p14_genomic.gff.gz'
+ref_gff = 'GCA_000001405.29_GRCh38.p14_genomic.gff'
 
 ref_fna_url = ('ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.fna.gz')  
-ref_fna = 'GCA_000001405.29_GRCh38.p14_genomic.fna.gz'  
+ref_fna = 'GCA_000001405.29_GRCh38.p14_genomic.fna'  
 
 
 
