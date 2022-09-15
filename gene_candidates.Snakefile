@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import pandas
 from snakemake.remote.FTP import RemoteProvider as FTPRemoteProvider
+from tempfile import mkdtemp
 
 #############
 # CONTAINERS #
