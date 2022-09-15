@@ -55,7 +55,7 @@ rule target:
 rule star_second_pass:
     input:
         r1 = 'output/trim/{sample}_1.fastq.gz',
-        r2 = 'output/trim/{sample}_2.fastq.gz'
+        r2 = 'output/trim/{sample}_2.fastq.gz',
         star_reference = 'output/star-index/SA',
         junctions = expand('output/star/pass1/{sample}.SJ.out.tab',
                            sample=all_samples)
@@ -96,7 +96,7 @@ rule star_second_pass:
 rule star_first_pass:
     input:
         r1 = 'output/trim/{sample}_1.fastq.gz',
-        r2 = 'output/trim/{sample}_2.fastq.gz'
+        r2 = 'output/trim/{sample}_2.fastq.gz',
         star_reference = 'output/star/star-index/SA' #What do the numbers mean? 007
     output:
         sjdb = 'output/star/pass1/{sample}.SJ.out.tab'
