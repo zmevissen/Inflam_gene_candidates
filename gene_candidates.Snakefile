@@ -7,7 +7,7 @@ from snakemake.remote.FTP import RemoteProvider as FTPRemoteProvider
 #############
 
 bbmap = "docker://quay.io/biocontainers/bbmap:38.98--h5c4e2a8_1"
-
+star = "docker://quay.io/biocontainers/star:2.7.10a--h9ee0642_0"
 
 #############
 # FUNCTIONS #
@@ -44,123 +44,115 @@ paired_sample_names = sorted(set(sample_table[sample_table.LibraryLayout == 'PAI
 # RULES #
 #########
 
-# rule target:
-#     input:
-#         expand('output/star/pass1/{sample}_{r}.fastq.gz',
-#                sample=paired_sample_names, r=[1, 2])
-        
-        
-        
-        
-        
-# rule star_second_pass:
-#     input:
-#         r1 = 'output/010_process/{sample}.r1.fastq.gz',
-#         star_reference = 'output/007_star-index/SA',
-#         junctions = expand('output/025_star/pass1/{sample}.SJ.out.tab',
-#                            sample=all_samples)
-#     output:
-#         bam = 'output/025_star/pass2/{sample}.Aligned.sortedByCoord.out.bam',
-#         counts = 'output/025_star/pass2/{sample}.ReadsPerGene.out.tab'
-#     threads:
-#         10
-#     params:
-#         genome_dir = 'output/007_star-index',
-#         prefix = 'output/025_star/pass2/{sample}.'
-#     log:
-#         'output/logs/star_second_pass.{sample}.log'
-#     resources:
-#         time = 59,
-#         mem_mb = 32 * 1000
-#     container:
-#         star
-#     shell:
-#         'STAR '
-#         '--runThreadN {threads} '
-#         '--genomeDir {params.genome_dir} '
-#         '--sjdbFileChrStartEnd {input.junctions} '
-#         '--outSAMtype BAM SortedByCoordinate '
-#         '--outReadsUnmapped Fastx '
-#         '--quantMode GeneCounts '
-#         '--readFilesCommand zcat '
-#         '--readFilesIn {input.r1} '
-#         '--outFileNamePrefix {params.prefix} '
-#         '--outTmpDir ' + dontmaketempdir() + ' '
-#         '&> {log}'
-        
-        
-        
-        
-# rule star_first_pass:
-#     input:
-#         r1 = 'output/trim/{sample}_1.fastq.gz',
-#         r2 = 'output/trim/{sample}_2.fastq.gz'
-#         star_reference = 'output/007_star-index/SA'
-#     output:
-#         sjdb = 'output/025_star/pass1/{sample}.SJ.out.tab'
-#     threads:
-#         10
-#     params:
-#         genome_dir = 'output/007_star-index',
-#         prefix = 'output/025_star/pass1/{sample}.'
-#     log:
-#         'output/logs/star_first_pass.{sample}.log'
-#     resources:
-#         time = 59,
-#         mem_mb = 32 * 1000
-#     container:
-#         star
-#     shell:
-#         'STAR '
-#         '--runThreadN {threads} '
-#         '--genomeDir {params.genome_dir} '
-#         '--outSJfilterReads Unique '
-#         '--outSAMtype None '          # troubleshoot gtf
-#         # '--outSAMtype SAM '               # troubleshoot gtf
-#         # '--quantMode GeneCounts '       # troubleshoot gtf
-#         '--readFilesCommand zcat '
-#         '--readFilesIn {input.r1} '
-#         '--outFileNamePrefix {params.prefix} '
-#         '&> {log}'
-
-
-        
-        
-# rule star_index:
-#     input:
-#         fasta = ref,
-#         gff = gff
-#     output:
-#         'output/007_star-index/SA'
-#     params:
-#         outdir = 'output/007_star-index'
-#     log:
-#         'output/logs/star_index.log'
-#     threads:
-#         10
-#     resources:
-#         time = 30,
-#         mem_mb = 32 * 1000
-#     container:
-#         star
-#     shell:
-#         'STAR '
-#         '--runThreadN {threads} '
-#         '--runMode genomeGenerate '
-#         '--genomeDir {params.outdir} '
-#         '--genomeFastaFiles {input.fasta} '
-#         '--sjdbGTFfile {input.gff} '
-#         '--genomeSAindexNbases 12 '
-#         '--outTmpDir ' + dontmaketempdir() + ' '
-#         '--sjdbGTFtagExonParentTranscript Parent '
-#         '--sjdbGTFtagExonParentGene gene '
-#         # '--sjdbGTFtagExonParentGeneName Name '
-#         '&> {log}'
-   
 rule target:
     input:
-        f'output/ref/{ref_gff}', 
-        f'output/ref/{ref_fna}'
+        expand('output/star/pass2/{sample}.Aligned.sortedByCoord.out.bam',
+               sample=paired_sample_names), 
+        expand('output/star/pass2/{sample}.ReadsPerGene.out.tab',
+               sample=paired_sample_names)
+        
+        
+rule star_second_pass:
+    input:
+        r1 = 'output/trim/{sample}_1.fastq.gz',
+        r2 = 'output/trim/{sample}_2.fastq.gz'
+        star_reference = 'output/star-index/SA',
+        junctions = expand('output/star/pass1/{sample}.SJ.out.tab',
+                           sample=all_samples)
+    output:
+        bam = 'output/star/pass2/{sample}.Aligned.sortedByCoord.out.bam',
+        counts = 'output/star/pass2/{sample}.ReadsPerGene.out.tab'
+    threads:
+        10
+    params:
+        genome_dir = 'output/star-index',
+        prefix = 'output/star/pass2/{sample}.'
+    log:
+        'output/logs/star_second_pass.{sample}.log'
+    resources:
+        time = 59,
+        mem_mb = 32 * 1000
+    container:
+        star
+    shell:
+        'STAR '
+        '--runThreadN {threads} '
+        '--genomeDir {params.genome_dir} ' #Do we need to use a scratch directory?
+        '--sjdbFileChrStartEnd {input.junctions} '  #WHy use this instead of just the GTF file?
+        '--outSAMtype BAM SortedByCoordinate '  #Explain sorted coordinate command?
+        '--outReadsUnmapped Fastx '   #Explain? Is this a file that contains the reads that were unmapped?
+        '--quantMode GeneCounts '   #This tells it to output counts for reads per gene but explain?
+        '--readFilesCommand zcat '
+        '--readFilesIn {input.r1} {input.r2}'
+        '--outFileNamePrefix {params.prefix} '
+        '--outTmpDir ' + dontmaketempdir() + ' ' #explain? 
+        '&> {log}'
+        
+
+        
+
+ #TODO is the purpose of the first pass to identify splice junctions? How does this work?       
+ #Can STAR handle multiple inputs? Will it produce 1 or 2 junction files?
+ rule star_first_pass:
+    input:
+        r1 = 'output/trim/{sample}_1.fastq.gz',
+        r2 = 'output/trim/{sample}_2.fastq.gz'
+        star_reference = 'output/star/star-index/SA' #What do the numbers mean? 007
+    output:
+        sjdb = 'output/star/pass1/{sample}.SJ.out.tab'
+    threads:
+        10
+    params:
+        index = 'output/star/star-index',
+        prefix = 'output/star/pass1/{sample}.'  #Can I remove the 025 prefix before star?
+    log:
+        'output/logs/star_first_pass.{sample}.log'
+    resources:
+        time = 59,
+        mem_mb = 32 * 1000
+    container:
+        star
+    shell:
+        'STAR '
+        '--runThreadN {threads} ' #is 10 good for us?
+        '--genomeDir {params.index} '
+        '--outSJfilterReads Unique ' #does this mean only uniquely mapped reads are kept?
+        '--outSAMtype None '     #So we are only interested in the splice junctions in this pass?
+        '--readFilesCommand zcat '  #Will zcat work or do I need to use gunzip because they are .gz?
+        '--readFilesIn {input.r1} {input.r2}' #Will this work?
+        '--outFileNamePrefix {params.prefix} ' #What does this do? is it just the file name before the SJ.out.tab'
+        '&> {log}'
+        
+        
+rule star_index:
+    input:
+        gff = f'output/ref/{ref_gff}', 
+        fasta = f'output/ref/{ref_fna}'
+    output:
+        'output/star/star-index/SA'
+    params:
+        outdir = 'output/star/star-index'
+    log:
+        'output/logs/star_index.log'
+    threads:
+        10
+    resources:
+        time = 30,
+        mem_mb = 32 * 1000
+    container:
+        star
+    shell:
+        'STAR '
+        '--runThreadN {threads} '
+        '--runMode genomeGenerate '
+        '--genomeDir {params.outdir} ' #does this need to be a scratch directory?
+        '--genomeFastaFiles {input.fasta} '
+        '--sjdbGTFfile {input.gff} ' 
+        '--genomeSAindexNbases 12 '  #explain? why 12 instead of default 14?
+        '--outTmpDir ' + dontmaketempdir() + ' ' #explain?
+        '--sjdbGTFtagExonParentTranscript Parent ' #explain?
+        '--sjdbGTFtagExonParentGene gene ' #explain?
+        '&> {log}'
         
 rule download_ref_fna:
     input:
@@ -170,7 +162,7 @@ rule download_ref_fna:
     log:
         'output/logs/ref_fna.log'
     shell:
-        'mv {input} {output} '
+        'cp {input} {output} '
     
 rule download_ref_gff:
     input:
@@ -180,7 +172,7 @@ rule download_ref_gff:
     log:
         'output/logs/ref_gff.log'
     shell:
-        'mv {input} {output} '
+        'cp {input} {output} '
 
 rule trim:
     input:
