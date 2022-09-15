@@ -8,7 +8,6 @@ from tempfile import mkdtemp
 #############
 
 bbmap = "docker://quay.io/biocontainers/bbmap:38.98--h5c4e2a8_1"
-#TODO is this the correct container? just got the first one
 star = "docker://quay.io/biocontainers/star:2.7.10a--h9ee0642_0"
 
 #############
@@ -16,7 +15,7 @@ star = "docker://quay.io/biocontainers/star:2.7.10a--h9ee0642_0"
 #############
 
 #TODO ask what this does?
-def dontmaketempdir():
+def maketempdir():
     return Path(mkdtemp(), 'tmp').resolve().as_posix()
 
 ###########
@@ -25,7 +24,7 @@ def dontmaketempdir():
 sample_table_loc = "data/sample_table/sample_table.csv"
 reads_dir = 'data/fastq_repaired'
 
-# TODO check with Tom this is correct: genomes downloaded from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/
+#genomes downloaded from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/
 ref_gff_url = ('ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.gff.gz')
 ref_gff = 'GCA_000001405.29_GRCh38.p14_genomic.gff.gz'
 
@@ -51,8 +50,6 @@ paired_sample_names = sorted(set(sample_table[sample_table.LibraryLayout == 'PAI
 
 rule target:
     input:
-        expand('output/star/pass2/{sample}.Aligned.sortedByCoord.out.bam',
-               sample=paired_sample_names), 
         expand('output/star/pass2/{sample}.ReadsPerGene.out.tab',
                sample=paired_sample_names)
         
@@ -65,12 +62,11 @@ rule star_second_pass:
         junctions = expand('output/star/pass1/{sample}.SJ.out.tab',
                            sample=paired_sample_names)
     output:
-        bam = 'output/star/pass2/{sample}.Aligned.sortedByCoord.out.bam',
         counts = 'output/star/pass2/{sample}.ReadsPerGene.out.tab'
     threads:
         10
     params:
-        genome_dir = 'output/star-index',
+        index = 'output/star-index',
         prefix = 'output/star/pass2/{sample}.'
     log:
         'output/logs/star_second_pass.{sample}.log'
@@ -82,34 +78,31 @@ rule star_second_pass:
     shell:
         'STAR '
         '--runThreadN {threads} '
-        '--genomeDir {params.genome_dir} ' #Do we need to use a scratch directory?
-        '--sjdbFileChrStartEnd {input.junctions} '  #WHy use this instead of just the GTF file?
-        '--outSAMtype BAM SortedByCoordinate '  #Explain sorted coordinate command?
-        '--outReadsUnmapped Fastx '   #Explain? Is this a file that contains the reads that were unmapped?
-        '--quantMode GeneCounts '   #This tells it to output counts for reads per gene but explain?
+        '--genomeDir {params.index} ' 
+        '--sjdbFileChrStartEnd {input.junctions} ' 
+        '--outSAMtype None ' 
+        '--quantMode GeneCounts ' 
         '--readFilesCommand zcat '
         '--readFilesIn {input.r1} {input.r2}'
         '--outFileNamePrefix {params.prefix} '
-        '--outTmpDir ' + dontmaketempdir() + ' ' #explain? 
+        '--outTmpDir ' + maketempdir() + ' '
         '&> {log}'
         
 
         
-
- #TODO is the purpose of the first pass to identify splice junctions? How does this work?       
- #Can STAR handle multiple inputs? Will it produce 1 or 2 junction files?
+      
 rule star_first_pass:
     input:
         r1 = 'output/trim/{sample}_1.fastq.gz',
         r2 = 'output/trim/{sample}_2.fastq.gz',
-        star_reference = 'output/star/star-index/SA' #What do the numbers mean? 007
+        star_reference = 'output/star/star-index/SA' 
     output:
         sjdb = 'output/star/pass1/{sample}.SJ.out.tab'
     threads:
         10
     params:
         index = 'output/star/star-index',
-        prefix = 'output/star/pass1/{sample}.'  #Can I remove the 025 prefix before star?
+        prefix = 'output/star/pass1/{sample}.'  
     log:
         'output/logs/star_first_pass.{sample}.log'
     resources:
@@ -119,13 +112,13 @@ rule star_first_pass:
         star
     shell:
         'STAR '
-        '--runThreadN {threads} ' #is 10 good for us?
+        '--runThreadN {threads} '
         '--genomeDir {params.index} '
-        '--outSJfilterReads Unique ' #does this mean only uniquely mapped reads are kept?
-        '--outSAMtype None '     #So we are only interested in the splice junctions in this pass?
-        '--readFilesCommand zcat '  #Will zcat work or do I need to use gunzip because they are .gz?
-        '--readFilesIn {input.r1} {input.r2}' #Will this work?
-        '--outFileNamePrefix {params.prefix} ' #What does this do? is it just the file name before the SJ.out.tab'
+        '--outSJfilterReads Unique ' 
+        '--outSAMtype None '
+        '--readFilesCommand zcat '
+        '--readFilesIn {input.r1} {input.r2}' 
+        '--outFileNamePrefix {params.prefix} '
         '&> {log}'
         
         
@@ -150,13 +143,13 @@ rule star_index:
         'STAR '
         '--runThreadN {threads} '
         '--runMode genomeGenerate '
-        '--genomeDir {params.outdir} ' #does this need to be a scratch directory?
+        '--genomeDir {params.outdir} '
         '--genomeFastaFiles {input.fasta} '
         '--sjdbGTFfile {input.gff} ' 
-        '--genomeSAindexNbases 12 '  #explain? why 12 instead of default 14?
-        '--outTmpDir ' + dontmaketempdir() + ' ' #explain?
-        '--sjdbGTFtagExonParentTranscript Parent ' #explain?
-        '--sjdbGTFtagExonParentGene gene ' #explain?
+        '--genomeSAindexNbases 12 '
+        '--outTmpDir ' + maketempdir() + ' '
+        '--sjdbGTFtagExonParentTranscript Parent '
+        '--sjdbGTFtagExonParentGene gene '
         '&> {log}'
         
 rule download_ref_fna:
