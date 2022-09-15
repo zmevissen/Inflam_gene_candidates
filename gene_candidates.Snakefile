@@ -7,12 +7,16 @@ from snakemake.remote.FTP import RemoteProvider as FTPRemoteProvider
 #############
 
 bbmap = "docker://quay.io/biocontainers/bbmap:38.98--h5c4e2a8_1"
+#TODO is this the correct container? just got the first one
 star = "docker://quay.io/biocontainers/star:2.7.10a--h9ee0642_0"
 
 #############
 # FUNCTIONS #
 #############
 
+#TODO ask what this does?
+def dontmaketempdir():
+    return Path(mkdtemp(), 'tmp').resolve().as_posix()
 
 ###########
 # GLOBALS #
