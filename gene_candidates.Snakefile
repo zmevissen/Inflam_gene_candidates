@@ -144,6 +144,7 @@ rule star_index:
         '--runThreadN {threads} '
         '--runMode genomeGenerate '
         '--genomeDir {params.outdir} '
+        '--readFilesCommand zcat '
         '--genomeFastaFiles {input.fasta} '
         '--sjdbGTFfile {input.gff} ' 
         '--genomeSAindexNbases 12 '
