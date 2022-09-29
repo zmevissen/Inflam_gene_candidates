@@ -127,7 +127,7 @@ rule star_index:
         gff = f'output/ref/{ref_gff}', 
         fasta = f'output/ref/{ref_fna}'
     output:
-        'output/star/star-index/SA'
+        directory('output/star/star-index')
     params:
         outdir = 'output/star/star-index'
     log:
@@ -135,7 +135,7 @@ rule star_index:
     threads:
         10
     resources:
-        time = 30,
+        time = 59,
         mem_mb = 32 * 1000
     container:
         star
