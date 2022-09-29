@@ -58,7 +58,7 @@ rule star_second_pass:
     input:
         r1 = 'output/trim/{sample}_1.fastq.gz',
         r2 = 'output/trim/{sample}_2.fastq.gz',
-        star_reference = 'output/star/star-index/SA',
+        star_reference = 'output/star/star-index',
         junctions = expand('output/star/pass1/{sample}.SJ.out.tab',
                            sample=paired_sample_names)
     output:
@@ -66,7 +66,6 @@ rule star_second_pass:
     threads:
         10
     params:
-        index = 'output/star-index',
         prefix = 'output/star/pass2/{sample}.'
     log:
         'output/logs/star_second_pass.{sample}.log'
@@ -78,7 +77,7 @@ rule star_second_pass:
     shell:
         'STAR '
         '--runThreadN {threads} '
-        '--genomeDir {params.index} ' 
+        '--genomeDir {input.star_reference} ' 
         '--sjdbFileChrStartEnd {input.junctions} ' 
         '--outSAMtype None ' 
         '--quantMode GeneCounts ' 
@@ -95,13 +94,12 @@ rule star_first_pass:
     input:
         r1 = 'output/trim/{sample}_1.fastq.gz',
         r2 = 'output/trim/{sample}_2.fastq.gz',
-        star_reference = 'output/star/star-index/SA' 
+        star_reference = 'output/star/star-index' 
     output:
         sjdb = 'output/star/pass1/{sample}.SJ.out.tab'
     threads:
         10
     params:
-        index = 'output/star/star-index',
         prefix = 'output/star/pass1/{sample}.'  
     log:
         'output/logs/star_first_pass.{sample}.log'
@@ -113,7 +111,7 @@ rule star_first_pass:
     shell:
         'STAR '
         '--runThreadN {threads} '
-        '--genomeDir {params.index} '
+        '--genomeDir {input.star_reference} '
         '--outSJfilterReads Unique ' 
         '--outSAMtype None '
         '--readFilesCommand zcat '
