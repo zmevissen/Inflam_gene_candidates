@@ -82,7 +82,7 @@ rule star_second_pass:
         '--outSAMtype None ' 
         '--quantMode GeneCounts ' 
         '--readFilesCommand zcat '
-        '--readFilesIn {input.r1} {input.r2}'
+        '--readFilesIn {input.r1} {input.r2} '
         '--outFileNamePrefix {params.prefix} '
         '--outTmpDir ' + maketempdir() + ' '
         '&> {log}'
@@ -115,7 +115,7 @@ rule star_first_pass:
         '--outSJfilterReads Unique ' 
         '--outSAMtype None '
         '--readFilesCommand zcat '
-        '--readFilesIn {input.r1} {input.r2}' 
+        '--readFilesIn {input.r1} {input.r2} ' 
         '--outFileNamePrefix {params.prefix} '
         '&> {log}'
         
