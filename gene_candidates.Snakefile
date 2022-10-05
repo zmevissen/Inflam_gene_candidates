@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import pandas
-from snakemake.remote.FTP import RemoteProvider as FTPRemoteProvider
+from snakemake.remote.HTTP import RemoteProvider as HTTPprovider
 from tempfile import mkdtemp
 
 #############
@@ -25,10 +25,10 @@ sample_table_loc = "data/sample_table/sample_table.csv"
 reads_dir = 'data/fastq_repaired'
 
 #genomes downloaded from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/
-ref_gff_url = ('ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.gff.gz')
+ref_gff_url = ('https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.gff.gz')
 ref_gff = 'GCA_000001405.29_GRCh38.p14_genomic.gff'
 
-ref_fna_url = ('ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.fna.gz')  
+ref_fna_url = ('https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.fna.gz')  
 ref_fna = 'GCA_000001405.29_GRCh38.p14_genomic.fna'  
 
 
@@ -36,7 +36,7 @@ ref_fna = 'GCA_000001405.29_GRCh38.p14_genomic.fna'
 #########
 # MAIN #
 #########
-FTP = FTPRemoteProvider()
+HTTP = HTTPprovider()
 
 sample_table = pandas.read_csv(
     sample_table_loc,
@@ -152,7 +152,7 @@ rule star_index:
         
 rule download_ref_fna:
     input:
-        FTP.remote(ref_fna_url, keep_local=True)
+        HTTP.remote(ref_fna_url, keep_local=True)
     output:
         f'output/ref/{ref_fna}'
     log:
@@ -162,7 +162,7 @@ rule download_ref_fna:
     
 rule download_ref_gff:
     input:
-        FTP.remote(ref_gff_url, keep_local=True)
+        HTTP.remote(ref_gff_url, keep_local=True)
     output:
         f'output/ref/{ref_gff}'
     log:
