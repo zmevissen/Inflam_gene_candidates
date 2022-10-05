@@ -104,8 +104,8 @@ rule star_first_pass:
     log:
         'output/logs/star_first_pass.{sample}.log'
     resources:
-        time = 59,
-        mem_mb = 32 * 1000
+        time = 99,
+        mem_mb = 64 * 1000
     container:
         star
     shell:
@@ -133,8 +133,8 @@ rule star_index:
     threads:
         10
     resources:
-        time = 59,
-        mem_mb = 32 * 1000
+        time = 99,
+        mem_mb = 64 * 1000
     container:
         star
     shell:
