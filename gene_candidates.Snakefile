@@ -158,7 +158,7 @@ rule download_ref_fna:
     log:
         'output/logs/ref_fna.log'
     shell:
-        'cp {input} {output} '
+        'gunzip -c {input} > {output} '
     
 rule download_ref_gff:
     input:
@@ -168,7 +168,7 @@ rule download_ref_gff:
     log:
         'output/logs/ref_gff.log'
     shell:
-        'cp {input} {output} '
+        'gunzip -c {input} > {output} '
 
 rule trim:
     input:
