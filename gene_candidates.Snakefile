@@ -25,11 +25,11 @@ sample_table_loc = "data/sample_table/sample_table.csv"
 reads_dir = 'data/fastq_repaired'
 
 #genomes downloaded from https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/
-ref_gff_url = ('https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.gff.gz')
-ref_gff = 'GCA_000001405.29_GRCh38.p14_genomic.gff'
+ref_gff_url = ('https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.40_GRCh38.p14/GCF_000001405.40_GRCh38.p14_genomic.gff.gz')
+ref_gff = 'GCF_000001405.40_GRCh38.p14_genomic.gff'
 
-ref_fna_url = ('https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.29_GRCh38.p14/GCA_000001405.29_GRCh38.p14_genomic.fna.gz')  
-ref_fna = 'GCA_000001405.29_GRCh38.p14_genomic.fna'  
+ref_fna_url = ('https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.40_GRCh38.p14/GCF_000001405.40_GRCh38.p14_genomic.fna.gz')  
+ref_fna = 'GCF_000001405.40_GRCh38.p14_genomic.fna'  
 
 
 
